@@ -1,0 +1,107 @@
+<!-- File: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TAT Inc. — One Man. Infinite Ideas.</title>
+  <meta name="description" content="TAT Inc. is a one‑man venture studio building bold partnerships and products across entertainment, tech, lifestyle, and beyond." />
+  <meta property="og:title" content="TAT Inc. — One Man. Infinite Ideas." />
+  <meta property="og:description" content="A lean venture studio crafting authentic, high‑impact collaborations. Let's build something iconic." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {font-family: Inter, sans-serif; background: #0b0f1a; color: #e6e8ee; margin: 0; padding: 0;}
+    .container {max-width: 1024px; margin: 0 auto; padding: 24px;}
+    header {display: flex; align-items: center; justify-content: space-between; padding: 16px 0;}
+    .logo {display: flex; align-items: center; gap: 10px;}
+    .logo img {height: 50px; width: auto; display: block;}
+    .badge {font-size: 12px; padding: 4px 8px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; color: #a7b0c0; margin-left: 8px;}
+    a {color: #22d3ee; text-decoration: none;}
+    a:hover {text-decoration: underline;}
+    .hero {padding: 60px 0; text-align: center;}
+    .hero h1 {font-size: 2.5rem; margin-bottom: 16px;}
+    .slogans {display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 24px 0;}
+    .slogan {border: 1px dashed rgba(255,255,255,.3); border-radius: 999px; padding: 8px 12px; color: #a7b0c0; font-size: 14px;}
+    .btn {display: inline-block; background: #22d3ee; color: #081015; font-weight: 700; padding: 12px 18px; border-radius: 12px; margin: 5px;}
+    .btn.ghost {background: transparent; color: #e6e8ee; border: 1px solid rgba(255,255,255,.3);}
+    .divider {height: 1px; background: rgba(255,255,255,.1); margin: 40px 0;}
+    .contact {background: rgba(255,255,255,.05); border-radius: 12px; padding: 20px;}
+    form {display: grid; gap: 12px;}
+    input, textarea {background: rgba(255,255,255,.1); border: none; color: #fff; border-radius: 8px; padding: 10px;}
+    footer {text-align: center; color: #a7b0c0; font-size: 14px; padding: 40px 0;}
+  </style>  <link rel="preload" as="image" href="https://sdmntprwestus3.oaiusercontent.com/files/00000000-ad18-61fd-9198-160e4c27e1d8/raw?se=2025-08-12T03%3A41%3A55Z&sp=r&sv=2024-08-04&sr=b&scid=9e4effe6-dfc6-53be-9002-b8177ea2ab75&skoid=f28c0102-4d9d-4950-baf0-4a8e5f6cf9d4&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-11T18%3A24%3A20Z&ske=2025-08-12T18%3A24%3A20Z&sks=b&skv=2024-08-04&sig=yq52L57KG54%2BbeERq0C2DhN8MgoqClCyBuT0USpWu5k%3D">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <img id="logo-img"
+          src="https://sdmntprwestus3.oaiusercontent.com/files/00000000-ad18-61fd-9198-160e4c27e1d8/raw?se=2025-08-12T03%3A41%3A55Z&sp=r&sv=2024-08-04&sr=b&scid=9e4effe6-dfc6-53be-9002-b8177ea2ab75&skoid=f28c0102-4d9d-4950-baf0-4a8e5f6cf9d4&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-08-11T18%3A24%3A20Z&ske=2025-08-12T18%3A24%3A20Z&sks=b&skv=2024-08-04&sig=yq52L57KG54%2BbeERq0C2DhN8MgoqClCyBuT0USpWu5k%3D"
+          alt="TAT Inc. Logo"
+          width="160"
+          height="50"
+          loading="eager"
+          fetchpriority="high"
+          referrerpolicy="no-referrer"
+          onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='block'"
+        >
+        <svg id="logo-fallback" width="160" height="50" viewBox="0 0 320 100" aria-label="TAT Inc." style="display:none">
+          <!-- Why: visual fallback if remote image fails -->
+          <text x="0" y="70" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="800" fill="#e6e8ee">TAT</text>
+        </svg>
+        <span class="badge">Venture Studio</span>
+      </div>
+      <nav>
+        <a href="#contact" class="btn ghost">Contact</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>One Man. Infinite Ideas.</h1>
+      <p>A lean venture studio building authentic, high‑impact partnerships across entertainment, tech, lifestyle, and culture. From garage to greatness—let’s build something iconic.</p>
+      <div class="slogans">
+        <span class="slogan">Building tomorrow’s ventures, today.</span>
+        <span class="slogan">Where bold ideas meet bold partnerships.</span>
+        <span class="slogan">Small studio, big vision.</span>
+      </div>
+      <a href="#contact" class="btn">Start a conversation</a>
+      <a href="mailto:emailme@tatinc.us" class="btn ghost">Email us</a>
+    </section>
+
+    <div class="divider"></div>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Two quick ways to reach us. Prefer email? Hit the button. Want a message form? Use the fields below.</p>
+
+      <div class="contact">
+        <p><a class="btn" href="mailto:emailme@tatinc.us?subject=Partnership%20Inquiry%20—%20TAT%20Inc.">Email: emailme@tatinc.us</a></p>
+        <!-- TODO: replace with your real Formspree ID -->
+        <form action="https://formspree.io/f/your-id" method="POST">
+          <input type="text" name="name" placeholder="Your name" required>
+          <input type="email" name="email" placeholder="Your email" required>
+          <textarea name="message" rows="5" placeholder="How can we collaborate?" required></textarea>
+          <button class="btn" type="submit">Send message</button>
+          <small>No fluff. Real collaboration only.</small>
+        </form>
+      </div>
+
+      <p style="margin-top:12px">LinkedIn: <a href="https://www.linkedin.com/in/chris-a-b03609196/" target="_blank" rel="noopener">Chris A.</a></p>
+    </section>
+
+    <footer>
+      © <span id="y"></span> TAT Inc. • Crafted with focus in the USA
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+
+
