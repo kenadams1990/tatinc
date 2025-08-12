@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    :root { --bg: #0b0f1a; --fg: #e6e8ee; --muted:#a7b0c0; --accent:#22d3ee; }
+    :root { --bg:#0b0f1a; --fg:#e6e8ee; --muted:#a7b0c0; --accent:#ff2d55; }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--fg); background: var(--bg); }
@@ -22,28 +22,38 @@
     }
     /* Darken for readability */
     body::after { content: ""; position: fixed; inset: 0; z-index: -1;
-      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.2), rgba(0,0,0,.75));
+      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.15), rgba(0,0,0,.78));
     }
 
-    .wrap { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+    /* Place card bottom-left so it avoids the logo */
+    .wrap { min-height: 100dvh; display: grid; place-items: end start; padding: clamp(16px,4vw,32px); }
 
-    .card { width: 100%; max-width: 720px; background: rgba(8,16,21,.6); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 24px; backdrop-filter: blur(8px) saturate(120%); }
+    .card { width: min(720px, 100%); background: rgba(8,16,21,.55); border: 1px solid rgba(255,45,85,.22);
+            border-radius: 16px; padding: 24px; backdrop-filter: blur(8px) saturate(120%);
+            box-shadow: 0 6px 24px rgba(0,0,0,.35), 0 0 0 1px rgba(255,45,85,.08) inset; }
 
     h1 { margin: 0 0 8px; font-size: clamp(28px, 4vw, 40px); letter-spacing: .3px; }
     p { margin: 0 0 16px; color: var(--muted); }
 
-    .links { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 20px; }
+    .links { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 4px; }
     .btn { display: inline-block; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); color: var(--fg); text-decoration: none; font-weight: 600; }
-    .btn.primary { background: var(--accent); color: #081015; border-color: transparent; }
+    .btn.primary { background: var(--accent); color: #0a0b0f; border-color: rgba(255,45,85,.6);
+                   box-shadow: 0 0 24px rgba(255,45,85,.25); }
+    .btn:hover { filter: brightness(1.08); }
 
-    footer { text-align: center; color: var(--muted); font-size: 14px; padding: 20px 0 0; }
+    footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px 0 0; }
+
+    @media (max-width: 520px) {
+      .wrap { place-items: end center; }
+      .card { padding: 18px; }
+    }
   </style>
 </head>
 <body>
   <main class="wrap">
     <section class="card" aria-label="Contact">
-      <h1>Contact me</h1>
-      <p>Email or connect via LinkedIn.</p>
+      <h1>Let’s build.</h1>
+      <p>Email or connect on LinkedIn.</p>
 
       <div class="links">
         <a class="btn primary" href="mailto:emailme@tatinc.us">emailme@tatinc.us</a>
@@ -59,11 +69,3 @@
   </script>
 </body>
 </html>
-
-<!-- Notes:
-- Save your provided reflection logo image as /assets/reflection.jpg in the repo.
-- This version removes the contact form. Only email and LinkedIn remain.
--->
-
-
-
