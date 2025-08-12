@@ -4,104 +4,66 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TAT Inc. — One Man. Infinite Ideas.</title>
-  <meta name="description" content="TAT Inc. is a one‑man venture studio building bold partnerships and products across entertainment, tech, lifestyle, and beyond." />
-  <meta property="og:title" content="TAT Inc. — One Man. Infinite Ideas." />
-  <meta property="og:description" content="A lean venture studio crafting authentic, high‑impact collaborations. Let's build something iconic." />
-  <meta property="og:type" content="website" />
-  <meta name="theme-color" content="#0f172a" />
+  <title>TAT Inc.</title>
+  <meta name="description" content="Contact TAT Inc." />
+  <meta name="theme-color" content="#0b0f1a" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    body {font-family: Inter, sans-serif; background: #0b0f1a; color: #e6e8ee; margin: 0; padding: 0;}
-    .container {max-width: 1024px; margin: 0 auto; padding: 24px;}
-    header {display: flex; align-items: center; justify-content: space-between; padding: 16px 0;}
-    .logo {display: flex; align-items: center; gap: 10px;}
-    .logo img {height: 50px; width: auto; display: block;}
-    .badge {font-size: 12px; padding: 4px 8px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; color: #a7b0c0; margin-left: 8px;}
-    a {color: #22d3ee; text-decoration: none;}
-    a:hover {text-decoration: underline;}
-    .hero {padding: 60px 0; text-align: center;}
-    .hero h1 {font-size: 2.5rem; margin-bottom: 16px;}
-    .slogans {display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 24px 0;}
-    .slogan {border: 1px dashed rgba(255,255,255,.3); border-radius: 999px; padding: 8px 12px; color: #a7b0c0; font-size: 14px;}
-    .btn {display: inline-block; background: #22d3ee; color: #081015; font-weight: 700; padding: 12px 18px; border-radius: 12px; margin: 5px;}
-    .btn.ghost {background: transparent; color: #e6e8ee; border: 1px solid rgba(255,255,255,.3);}
-    .divider {height: 1px; background: rgba(255,255,255,.1); margin: 40px 0;}
-    .contact {background: rgba(255,255,255,.05); border-radius: 12px; padding: 20px;}
-    form {display: grid; gap: 12px;}
-    input, textarea {background: rgba(255,255,255,.1); border: none; color: #fff; border-radius: 8px; padding: 10px;}
-    footer {text-align: center; color: #a7b0c0; font-size: 14px; padding: 40px 0;}
-  </style>  <link rel="preload" as="image" href="assets/logo.jpg">
+    :root { --bg: #0b0f1a; --fg: #e6e8ee; --muted:#a7b0c0; --accent:#22d3ee; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--fg); background: var(--bg); }
+
+    /* Full-screen reflection logo background */
+    body::before { content: ""; position: fixed; inset: 0; z-index: -2;
+      background: center / cover no-repeat url('/assets/reflection.jpg');
+    }
+    /* Darken for readability */
+    body::after { content: ""; position: fixed; inset: 0; z-index: -1;
+      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.2), rgba(0,0,0,.75));
+    }
+
+    .wrap { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+
+    .card { width: 100%; max-width: 720px; background: rgba(8,16,21,.6); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 24px; backdrop-filter: blur(8px) saturate(120%); }
+
+    h1 { margin: 0 0 8px; font-size: clamp(28px, 4vw, 40px); letter-spacing: .3px; }
+    p { margin: 0 0 16px; color: var(--muted); }
+
+    .links { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 20px; }
+    .btn { display: inline-block; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); color: var(--fg); text-decoration: none; font-weight: 600; }
+    .btn.primary { background: var(--accent); color: #081015; border-color: transparent; }
+
+    footer { text-align: center; color: var(--muted); font-size: 14px; padding: 20px 0 0; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="logo">
-        <img id="logo-img"
-          src="assets/logo.jpg"
-          alt="TAT Inc. Logo"
-          width="160"
-          height="50"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='block'"
-        >
-        <svg id="logo-fallback" width="160" height="50" viewBox="0 0 320 100" aria-label="TAT Inc." style="display:none">
-          <!-- Why: visual fallback if remote image fails -->
-          <text x="0" y="70" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="800" fill="#e6e8ee">TAT</text>
-        </svg>
-        <span class="badge">Venture Studio</span>
-      </div>
-      <nav>
-        <a href="#contact" class="btn ghost">Contact</a>
-      </nav>
-    </header>
+  <main class="wrap">
+    <section class="card" aria-label="Contact">
+      <h1>Contact me</h1>
+      <p>Email or connect via LinkedIn.</p>
 
-    <section class="hero">
-      <h1>One Man. Infinite Ideas.</h1>
-      <p>A lean venture studio building authentic, high‑impact partnerships across entertainment, tech, lifestyle, and culture. From garage to greatness—let’s build something iconic.</p>
-      <div class="slogans">
-        <span class="slogan">Building tomorrow’s ventures, today.</span>
-        <span class="slogan">Where bold ideas meet bold partnerships.</span>
-        <span class="slogan">Small studio, big vision.</span>
+      <div class="links">
+        <a class="btn primary" href="mailto:emailme@tatinc.us">emailme@tatinc.us</a>
+        <a class="btn" href="https://www.linkedin.com/in/chris-a-b03609196/" target="_blank" rel="noopener">LinkedIn</a>
       </div>
-      <a href="#contact" class="btn">Start a conversation</a>
-      <a href="mailto:emailme@tatinc.us" class="btn ghost">Email us</a>
+
+      <footer>© <span id="y"></span> TAT Inc.</footer>
     </section>
-
-    <div class="divider"></div>
-
-    <section id="contact">
-      <h2>Contact</h2>
-      <p>Two quick ways to reach us. Prefer email? Hit the button. Want a message form? Use the fields below.</p>
-
-      <div class="contact">
-        <p><a class="btn" href="mailto:emailme@tatinc.us?subject=Partnership%20Inquiry%20—%20TAT%20Inc.">Email: emailme@tatinc.us</a></p>
-        <!-- TODO: replace with your real Formspree ID -->
-        <form action="https://formspree.io/f/your-id" method="POST">
-          <input type="text" name="name" placeholder="Your name" required>
-          <input type="email" name="email" placeholder="Your email" required>
-          <textarea name="message" rows="5" placeholder="How can we collaborate?" required></textarea>
-          <button class="btn" type="submit">Send message</button>
-          <small>No fluff. Real collaboration only.</small>
-        </form>
-      </div>
-
-      <p style="margin-top:12px">LinkedIn: <a href="https://www.linkedin.com/in/chris-a-b03609196/" target="_blank" rel="noopener">Chris A.</a></p>
-    </section>
-
-    <footer>
-      © <span id="y"></span> TAT Inc. • Crafted with focus in the USA
-    </footer>
-  </div>
+  </main>
 
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
+
+<!-- Notes:
+- Save your provided reflection logo image as /assets/reflection.jpg in the repo.
+- This version removes the contact form. Only email and LinkedIn remain.
+-->
+
 
 
