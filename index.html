@@ -197,9 +197,17 @@
       .btn.icon, .copy { width: 44px; height: 44px; border-radius: 12px; }
     }
   </style>
+  <style>
+    /* Twinkling rooftop lights */
+    .twinkles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .twinkles circle { fill: rgba(255,255,255,.95); opacity: .05; }
+    .twinkles .star { animation: twinkle var(--t,6s) ease-in-out infinite; animation-delay: var(--d,0s); filter: drop-shadow(0 0 2px rgba(255,255,255,.35)); }
+    @keyframes twinkle { 0%, 100% { opacity: .05; } 45% { opacity: .9; } }
+  </style>
 </head>
 <body>
   <div class="water" aria-hidden="true"></div>
+  <svg class="twinkles" aria-hidden="true"></svg>
   <main class="wrap">
     <section class="card" aria-label="Contact">
       <h1 class="headline" data-text="Let’s connect.">Let’s connect.</h1>
@@ -277,6 +285,36 @@
           document.body.removeChild(ta);
         }
       });
+    })();
+  </script>
+  <script>
+    // Generate twinkling lights in upper, empty sky area
+    (function(){
+      var svg = document.querySelector('.twinkles');
+      if(!svg) return;
+      function regen(){
+        var w = window.innerWidth, h = window.innerHeight;
+        svg.setAttribute('viewBox', '0 0 '+w+' '+h);
+        svg.innerHTML = '';
+        var n = Math.min(140, Math.round(w*h/9000));
+        var topLimit = Math.max(140, h * 0.55); // only top ~55% of viewport
+        var sidePad = Math.max(24, w * 0.08);
+        for(var i=0;i<n;i++){
+          var cx = sidePad + Math.random() * (w - sidePad*2);
+          var cy = Math.random() * topLimit; // stay above the logo reflection band
+          var r  = 0.4 + Math.random()*1.2;
+          var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+          c.setAttribute('cx', cx.toFixed(2));
+          c.setAttribute('cy', cy.toFixed(2));
+          c.setAttribute('r',  r.toFixed(2));
+          c.setAttribute('class','star');
+          c.style.setProperty('--t', (5 + Math.random()*6)+'s');
+          c.style.setProperty('--d', (Math.random()*10)+'s');
+          svg.appendChild(c);
+        }
+      }
+      regen();
+      window.addEventListener('resize', regen);
     })();
   </script>
   <!-- Plausible Analytics -->
