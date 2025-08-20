@@ -32,16 +32,23 @@
     body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--fg); background: var(--bg); }
 
     /* Full-screen reflection logo background */
-    body::before { content: ""; position: fixed; inset: 0; z-index: -2;
+    body::before { content: ""; position: fixed; inset: 0; z-index: -3;
       background: center / cover no-repeat var(--bg-url, url('/assets/reflection.jpg'));
     }
     /* Darken for readability */
     body::after { content: ""; position: fixed; inset: 0; z-index: -1;
       background: radial-gradient(1200px 800px at 60% 20%, rgba(0,0,0,.18), rgba(0,0,0,.78));
     }
+    /* Water overlay only at bottom */
+    .water { position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background: center / cover no-repeat var(--bg-url, url('/assets/reflection.jpg'));
+      filter: url(#waterRipple);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,.9) 22%, rgba(0,0,0,.6) 38%, rgba(0,0,0,0) 62%);
+              mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,.9) 22%, rgba(0,0,0,.6) 38%, rgba(0,0,0,0) 62%);
+    }
 
     /* Place card top-right to avoid logo */
-    .wrap { min-height: 100dvh; display: grid; place-items: center; padding: clamp(16px,4vw,32px); }
+    .wrap { min-height: 100dvh; display: grid; align-items: start; justify-items: center; padding-block-start: var(--hero-offset,14vh); padding: clamp(16px,4vw,32px); }
 
     .card { position: relative; z-index: 0;
       width: min(720px, 100%);
@@ -78,7 +85,18 @@
         drop-shadow(0 12px 22px rgba(0,0,0,.45));
       animation: steelPan 24s linear infinite;
     }
-    .headline::after { /* reflection */$1filter: url(#waterRipple) blur(.7px);
+    .headline::after { content: attr(data-text); position: absolute; left: 0; top: 100%; width: 100%;
+      transform: scaleY(-1); transform-origin: top; color: transparent;
+      background:
+        repeating-linear-gradient(0deg,
+          rgba(255,255,255,var(--stripe-light)) 0,
+          rgba(255,255,255,var(--stripe-light)) .7px,
+          rgba(0,0,0,var(--stripe-dark)) .7px,
+          rgba(0,0,0,var(--stripe-dark)) 1.4px),
+        var(--steel-grad);
+      background-size: 300% 100%, 300% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      opacity: .32; filter: blur(.6px);
       -webkit-mask-image: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 70%);
               mask-image: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 70%);
       animation: steelPan 24s linear infinite;
@@ -171,8 +189,17 @@
     }
     @keyframes reflectFlow { 0%,100% { -webkit-mask-position: 0 0; } 50% { -webkit-mask-position: 0 40%; } }
   </style>
+  <style>
+    /* Mobile overrides */
+    @media (max-width: 520px) {
+      .wrap { padding-block-start: 12vh; }
+      .card { padding: 14px; width: min(92vw, 520px); }
+      .btn.icon, .copy { width: 44px; height: 44px; border-radius: 12px; }
+    }
+  </style>
 </head>
 <body>
+  <div class="water" aria-hidden="true"></div>
   <main class="wrap">
     <section class="card" aria-label="Contact">
       <h1 class="headline" data-text="Let’s connect.">Let’s connect.</h1>
