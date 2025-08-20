@@ -32,15 +32,15 @@
     body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--fg); background: var(--bg); }
 
     /* Full-screen reflection logo background */
-    body::before { content: ""; position: fixed; inset: 0; z-index: -3;
+    body::before { content: ""; position: fixed; inset: 0; z-index: -4;
       background: center / cover no-repeat var(--bg-url, url('/assets/reflection.jpg'));
     }
     /* Darken for readability */
-    body::after { content: ""; position: fixed; inset: 0; z-index: -1;
+    body::after { content: ""; position: fixed; inset: 0; z-index: -2;
       background: radial-gradient(1200px 800px at 60% 20%, rgba(0,0,0,.18), rgba(0,0,0,.78));
     }
     /* Water overlay only at bottom */
-    .water { position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    .water { position: fixed; inset: 0; z-index: -3; pointer-events: none; pointer-events: none;
       background: center bottom / cover no-repeat var(--bg-url, url('/assets/reflection.jpg'));
       filter: url(#waterRipple);
       -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 24%, rgba(0,0,0,0) 30%);
@@ -176,6 +176,21 @@
       .btn svg { width: 16px; height: 16px; }
       .copy { width:34px; height:34px; }
     }
+    /* Low fog drift at bottom */
+    .fog { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .fog::before, .fog::after {
+      content: ""; position: absolute; inset: 0; opacity: .16; filter: blur(20px);
+      background:
+        radial-gradient(45% 22% at 10% 92%, rgba(255,255,255,.25), rgba(255,255,255,0) 60%),
+        radial-gradient(40% 18% at 55% 94%, rgba(255,255,255,.22), rgba(255,255,255,0) 60%),
+        radial-gradient(42% 18% at 82% 90%, rgba(255,255,255,.20), rgba(255,255,255,0) 60%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,.95) 22%, rgba(0,0,0,.35) 38%, rgba(0,0,0,0) 52%);
+              mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,.95) 22%, rgba(0,0,0,.35) 38%, rgba(0,0,0,0) 52%);
+      animation: fogDrift1 90s linear infinite;
+    }
+    .fog::after { opacity: .12; filter: blur(28px); animation: fogDrift2 140s linear infinite reverse; }
+    @keyframes fogDrift1 { from { transform: translate3d(-8%,0,0); } to { transform: translate3d(8%,0,0); } }
+    @keyframes fogDrift2 { from { transform: translate3d(12%,0,0); } to { transform: translate3d(-12%,0,0); } }
   </style>
   <style id="animFix">
     /* Force chrome reflection animation + ripple */
@@ -199,13 +214,13 @@
   </style>
   <style>
     /* Twinkling rooftop lights */
-    .twinkles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    .twinkles { display: none !important; }
     .twinkles circle { fill: rgba(255,255,255,.95); opacity: .06; }
     .twinkles .star { animation: twinkle var(--t,8s) ease-in-out infinite; animation-delay: var(--d,0s); filter: drop-shadow(0 0 2px rgba(255,255,255,.35)); }
     @keyframes twinkle { 0%, 100% { opacity: .06; } 45% { opacity: .9; } }
 
     /* Shooting star */
-    .shooter { position: fixed; z-index: -1; pointer-events: none; width: 220px; height: 2px; transform: rotate(var(--rot,-20deg)); opacity: 0; }
+    .shooter { position: fixed; z-index: -1; pointer-events: none; width: 220px; height: 2px; transform: rotate(var(--rot,-20deg)); }
     .shooter .runner { position: absolute; left: 0; top: 0; width: 220px; height: 2px; animation: fly 2.8s linear forwards; }
     .shooter .trail { position: absolute; right: 0; top: 0; width: 220px; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95) 60%, rgba(255,255,255,0)); filter: blur(1px); }
     .shooter .head { position: absolute; right: -1px; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.95), 0 0 20px rgba(255,255,255,.6); }
@@ -214,7 +229,8 @@
 </head>
 <body>
   <div class="water" aria-hidden="true"></div>
-  <svg class="twinkles" aria-hidden="true"></svg>
+  <div class="fog" aria-hidden="true"></div>
+  
   <main class="wrap">
     <section class="card" aria-label="Contact">
       <h1 class="headline" data-text="Let’s connect.">Let’s connect.</h1>
@@ -295,48 +311,13 @@
     })();
   </script>
   <script>
-    // Twinkles generator + safe zone + shooting star every 7s
+    // Single shooting star every 7s, above vignette overlay
     (function(){
-      var svg = document.querySelector('.twinkles');
-      if(!svg) return;
-      function regen(){
-        var w = window.innerWidth, h = window.innerHeight;
-        svg.setAttribute('viewBox', '0 0 '+w+' '+h);
-        svg.innerHTML = '';
-        var n = Math.min(140, Math.round(w*h/9000));
-        var topLimit = Math.max(140, h * 0.60); // upper 60%
-        var sidePad = Math.max(24, w * 0.08);
-        // central safe zone where the forward TAT sits
-        var sx1 = w*0.18, sx2 = w*0.82, sy1 = h*0.12, sy2 = h*0.58;
-        var tries = 0;
-        for(var i=0;i<n;i++){
-          var cx, cy; do {
-            cx = sidePad + Math.random() * (w - sidePad*2);
-            cy = Math.random() * topLimit;
-            tries++; if (tries>n*20) break; // escape if too dense
-          } while (cx>sx1 && cx<sx2 && cy>sy1 && cy<sy2); // avoid central logo area
-          var r  = 0.4 + Math.random()*1.2;
-          var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
-          c.setAttribute('cx', cx.toFixed(2));
-          c.setAttribute('cy', cy.toFixed(2));
-          c.setAttribute('r',  r.toFixed(2));
-          c.setAttribute('class','star');
-          c.style.setProperty('--t', (6 + Math.random()*7)+'s');
-          c.style.setProperty('--d', (Math.random()*10)+'s');
-          svg.appendChild(c);
-        }
-      }
-      regen();
-      window.addEventListener('resize', regen);
-
-      // Shooting star
       function shoot(){
         var w = window.innerWidth, h = window.innerHeight;
-        var startY = Math.min(h*0.32, 340) * Math.random();
-        var startX = Math.random() * (w*0.35);
-        var rot = -15 - Math.random()*15;
-        // keep away from center safe zone
-        if (startX>w*0.18 && startX<w*0.82 && startY>h*0.12 && startY<h*0.58) { startY = h*0.08; startX = w*0.1; }
+        var startY = Math.random() * (h*0.25); // keep high in sky
+        var startX = Math.random() * (w*0.15);
+        var rot = -10 - Math.random()*20;
         var el = document.createElement('div'); el.className='shooter';
         el.style.left = startX+'px'; el.style.top = startY+'px'; el.style.setProperty('--rot', rot+'deg');
         var runner = document.createElement('div'); runner.className='runner';
@@ -345,8 +326,8 @@
         document.body.appendChild(el);
         runner.addEventListener('animationend', function(){ el.remove(); });
       }
-      setTimeout(shoot, 1200);
-      setInterval(shoot, 7000); // every 7 seconds
+      setTimeout(shoot, 800);
+      setInterval(shoot, 7000);
     })();
   </script>
   <!-- Plausible Analytics -->
