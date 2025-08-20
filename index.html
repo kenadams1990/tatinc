@@ -200,9 +200,16 @@
   <style>
     /* Twinkling rooftop lights */
     .twinkles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-    .twinkles circle { fill: rgba(255,255,255,.95); opacity: .05; }
-    .twinkles .star { animation: twinkle var(--t,6s) ease-in-out infinite; animation-delay: var(--d,0s); filter: drop-shadow(0 0 2px rgba(255,255,255,.35)); }
-    @keyframes twinkle { 0%, 100% { opacity: .05; } 45% { opacity: .9; } }
+    .twinkles circle { fill: rgba(255,255,255,.95); opacity: .06; }
+    .twinkles .star { animation: twinkle var(--t,8s) ease-in-out infinite; animation-delay: var(--d,0s); filter: drop-shadow(0 0 2px rgba(255,255,255,.35)); }
+    @keyframes twinkle { 0%, 100% { opacity: .06; } 45% { opacity: .9; } }
+
+    /* Shooting star */
+    .shooter { position: fixed; z-index: -1; pointer-events: none; width: 220px; height: 2px; transform: rotate(var(--rot,-20deg)); opacity: 0; }
+    .shooter .runner { position: absolute; left: 0; top: 0; width: 220px; height: 2px; animation: fly 2.8s linear forwards; }
+    .shooter .trail { position: absolute; right: 0; top: 0; width: 220px; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95) 60%, rgba(255,255,255,0)); filter: blur(1px); }
+    .shooter .head { position: absolute; right: -1px; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.95), 0 0 20px rgba(255,255,255,.6); }
+    @keyframes fly { from { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } to { transform: translateX(48vw); opacity: 0; } }
   </style>
 </head>
 <body>
@@ -238,12 +245,12 @@
   <!-- SVG water ripple filter for reflection -->
   <svg width="0" height="0" style="position:absolute">
     <filter id="waterRipple">
-      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.008" numOctaves="2" seed="9" result="noise">
-        <animate attributeName="baseFrequency" dur="22s" values="0.004 0.008;0.006 0.010;0.004 0.008" repeatCount="indefinite" />
-        <animate attributeName="seed" dur="40s" values="9;120;9" repeatCount="indefinite" />
+      <feTurbulence type="fractalNoise" baseFrequency="0.003 0.006" numOctaves="2" seed="9" result="noise">
+        <animate attributeName="baseFrequency" dur="32s" values="0.003 0.006;0.004 0.008;0.003 0.006" repeatCount="indefinite" />
+        <animate attributeName="seed" dur="60s" values="9;120;9" repeatCount="indefinite" />
       </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G">
-        <animate attributeName="scale" dur="22s" values="4;7;4" repeatCount="indefinite" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" dur="32s" values="3;5;3" repeatCount="indefinite" />
       </feDisplacementMap>
       <feGaussianBlur stdDeviation="0.35" />
     </filter>
@@ -288,7 +295,7 @@
     })();
   </script>
   <script>
-    // Generate twinkling lights in upper, empty sky area
+    // Twinkles generator + safe zone + shooting star every 7s
     (function(){
       var svg = document.querySelector('.twinkles');
       if(!svg) return;
@@ -297,24 +304,49 @@
         svg.setAttribute('viewBox', '0 0 '+w+' '+h);
         svg.innerHTML = '';
         var n = Math.min(140, Math.round(w*h/9000));
-        var topLimit = Math.max(140, h * 0.55); // only top ~55% of viewport
+        var topLimit = Math.max(140, h * 0.60); // upper 60%
         var sidePad = Math.max(24, w * 0.08);
+        // central safe zone where the forward TAT sits
+        var sx1 = w*0.18, sx2 = w*0.82, sy1 = h*0.12, sy2 = h*0.58;
+        var tries = 0;
         for(var i=0;i<n;i++){
-          var cx = sidePad + Math.random() * (w - sidePad*2);
-          var cy = Math.random() * topLimit; // stay above the logo reflection band
+          var cx, cy; do {
+            cx = sidePad + Math.random() * (w - sidePad*2);
+            cy = Math.random() * topLimit;
+            tries++; if (tries>n*20) break; // escape if too dense
+          } while (cx>sx1 && cx<sx2 && cy>sy1 && cy<sy2); // avoid central logo area
           var r  = 0.4 + Math.random()*1.2;
           var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
           c.setAttribute('cx', cx.toFixed(2));
           c.setAttribute('cy', cy.toFixed(2));
           c.setAttribute('r',  r.toFixed(2));
           c.setAttribute('class','star');
-          c.style.setProperty('--t', (5 + Math.random()*6)+'s');
+          c.style.setProperty('--t', (6 + Math.random()*7)+'s');
           c.style.setProperty('--d', (Math.random()*10)+'s');
           svg.appendChild(c);
         }
       }
       regen();
       window.addEventListener('resize', regen);
+
+      // Shooting star
+      function shoot(){
+        var w = window.innerWidth, h = window.innerHeight;
+        var startY = Math.min(h*0.32, 340) * Math.random();
+        var startX = Math.random() * (w*0.35);
+        var rot = -15 - Math.random()*15;
+        // keep away from center safe zone
+        if (startX>w*0.18 && startX<w*0.82 && startY>h*0.12 && startY<h*0.58) { startY = h*0.08; startX = w*0.1; }
+        var el = document.createElement('div'); el.className='shooter';
+        el.style.left = startX+'px'; el.style.top = startY+'px'; el.style.setProperty('--rot', rot+'deg');
+        var runner = document.createElement('div'); runner.className='runner';
+        runner.innerHTML = '<div class="trail"></div><div class="head"></div>';
+        el.appendChild(runner);
+        document.body.appendChild(el);
+        runner.addEventListener('animationend', function(){ el.remove(); });
+      }
+      setTimeout(shoot, 1200);
+      setInterval(shoot, 7000); // every 7 seconds
     })();
   </script>
   <!-- Plausible Analytics -->
