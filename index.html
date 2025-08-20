@@ -40,7 +40,7 @@
       background: radial-gradient(1200px 800px at 60% 20%, rgba(0,0,0,.18), rgba(0,0,0,.78));
     }
     /* Water overlay only at bottom */
-    .water { position: fixed; inset: 0; z-index: -3; pointer-events: none; pointer-events: none;
+    .water { position: fixed; inset: 0; z-index: -3; pointer-events: none;
       background: center bottom / cover no-repeat var(--bg-url, url('/assets/reflection.jpg'));
       filter: url(#waterRipple);
       -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 24%, rgba(0,0,0,0) 30%);
@@ -166,16 +166,6 @@
 
     .page-footer { position: fixed; right: 16px; bottom: 12px; text-align: right; color: var(--muted); font-size: 14px; padding: 0; z-index: 1; }
 
-    /* Mobile optimizations */
-    @media (max-width: 520px) {$1}
-
-      .btn.icon, .copy { width: 44px; height: 44px; border-radius: 12px; }
-    }
-      .card { padding: 14px; width: min(92vw, 520px); }
-      .btn { padding: 10px 12px; gap: 8px; font-weight: 600; }
-      .btn svg { width: 16px; height: 16px; }
-      .copy { width:34px; height:34px; }
-    }
     /* Low fog drift at bottom */
     .fog { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
     .fog::before, .fog::after {
@@ -213,22 +203,25 @@
     }
   </style>
   <style>
-    /* Twinkling rooftop lights */
-    .twinkles { display: none !important; }
+    /* Twinkling lights + city glow */
+    .twinkles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
     .twinkles circle { fill: rgba(255,255,255,.95); opacity: .06; }
-    .twinkles .star { animation: twinkle var(--t,8s) ease-in-out infinite; animation-delay: var(--d,0s); filter: drop-shadow(0 0 2px rgba(255,255,255,.35)); }
-    @keyframes twinkle { 0%, 100% { opacity: .06; } 45% { opacity: .9; } }
+    .twinkles .star { animation: twinkle var(--t,9s) ease-in-out infinite; animation-delay: var(--d,0s); filter: drop-shadow(0 0 2px rgba(255,255,255,.35)); }
+    @keyframes twinkle { 0%,100%{opacity:.05} 50%{opacity:.9} }
 
-    /* Shooting star */
-    .shooter { position: fixed; z-index: 0; pointer-events: none; width: 220px; height: 2px; transform: rotate(var(--rot,-20deg)); pointer-events: none; width: 220px; height: 2px; transform: rotate(var(--rot,-20deg)); }
-    .shooter .runner { position: absolute; left: 0; top: 0; width: 220px; height: 2px; animation: fly 4.8s linear forwards; } }
-    .shooter .trail { position: absolute; right: 0; top: 0; width: 220px; height: 2px; background: linear-gradient(90deg, rgba(173,216,255,0), rgba(173,216,255,.45) 35%, rgba(173,216,255,.9) 60%, rgba(255,255,255,.95) 70%, rgba(173,216,255,.5) 85%, rgba(173,216,255,0)); filter: blur(1px); box-shadow: 0 0 12px rgba(120,180,255,.5), 0 0 28px rgba(120,180,255,.35); }
-    .shooter .head { position: absolute; right: -1px; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: radial-gradient(circle, #ffffff 0%, #d7e9ff 55%, rgba(215,233,255,0) 75%); box-shadow: 0 0 10px rgba(173,216,255,.95), 0 0 24px rgba(173,216,255,.6); }
-    @keyframes fly { from { transform: translateX(0); opacity: 0; } 8% { opacity: 1; } to { transform: translateX(52vw); opacity: 0; } } 10% { opacity: 1; } to { transform: translateX(48vw); opacity: 0; } }
+    .cityglow { position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(120% 50% at 50% 62%, rgba(255,120,64,.14), rgba(255,120,64,0) 60%),
+        radial-gradient(70% 35% at 20% 65%, rgba(255,80,48,.10), rgba(255,80,48,0) 60%),
+        radial-gradient(70% 35% at 80% 68%, rgba(255,80,48,.10), rgba(255,80,48,0) 60%);
+      filter: blur(24px);
+    }
   </style>
 </head>
 <body>
   <div class="water" aria-hidden="true"></div>
+  <div class="cityglow" aria-hidden="true"></div>
+  <svg class="twinkles" aria-hidden="true"></svg>
   <div class="fog" aria-hidden="true"></div>
   
   <main class="wrap">
@@ -311,23 +304,41 @@
     })();
   </script>
   <script>
-    // Single shooting star every 7s, above vignette overlay
+    // Minimal twinkles in top 60%, avoid card + central logo area
     (function(){
-      function shoot(){
+      var svg = document.querySelector('.twinkles');
+      var card = document.querySelector('.card');
+      function regen(){
+        if(!svg) return;
         var w = window.innerWidth, h = window.innerHeight;
-        var startY = Math.random() * (h*0.25); // keep high in sky
-        var startX = Math.random() * (w*0.15);
-        var rot = -10 - Math.random()*20;
-        var el = document.createElement('div'); el.className='shooter';
-        el.style.left = startX+'px'; el.style.top = startY+'px'; el.style.setProperty('--rot', rot+'deg');
-        var runner = document.createElement('div'); runner.className='runner';
-        runner.innerHTML = '<div class="trail"></div><div class="head"></div>';
-        el.appendChild(runner);
-        document.body.appendChild(el);
-        runner.addEventListener('animationend', function(){ el.remove(); });
+        svg.setAttribute('viewBox', '0 0 '+w+' '+h);
+        svg.innerHTML = '';
+        var n = Math.max(20, Math.min(60, Math.round(w*h/45000)));
+        var topLimit = h*0.60;
+        var sidePad = Math.max(16, w*0.06);
+        var cr = card ? card.getBoundingClientRect() : {left:w*0.25, right:w*0.75, top:h*0.10, bottom:h*0.32};
+        var sx1 = cr.left - 20, sx2 = cr.right + 20, sy1 = cr.top - 20, sy2 = cr.bottom + 20;
+        var cx1 = w*0.15, cx2 = w*0.85, cy1 = h*0.28, cy2 = h*0.72;
+        for(var i=0;i<n;i++){
+          var cx, cy, guard=0;
+          do{
+            cx = sidePad + Math.random()*(w - sidePad*2);
+            cy = Math.random()*topLimit;
+            guard++; if(guard>200) break;
+          } while ((cx>sx1 && cx<sx2 && cy>sy1 && cy<sy2) || (cx>cx1 && cx<cx2 && cy>cy1 && cy<cy2));
+          var r = 0.4 + Math.random()*1.2;
+          var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+          c.setAttribute('cx', cx.toFixed(2));
+          c.setAttribute('cy', cy.toFixed(2));
+          c.setAttribute('r', r.toFixed(2));
+          c.setAttribute('class','star');
+          c.style.setProperty('--t', (7 + Math.random()*6)+'s');
+          c.style.setProperty('--d', (Math.random()*8)+'s');
+          svg.appendChild(c);
+        }
       }
-      setTimeout(shoot, 800);
-      setInterval(shoot, 7000);
+      regen();
+      window.addEventListener('resize', regen);
     })();
   </script>
   <!-- Plausible Analytics -->
