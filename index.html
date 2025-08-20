@@ -164,7 +164,7 @@
     }
     .copy svg { width:18px; height:18px; }
 
-    footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px 0 0; }
+    .page-footer { position: fixed; right: 16px; bottom: 12px; text-align: right; color: var(--muted); font-size: 14px; padding: 0; z-index: 1; }
 
     /* Mobile optimizations */
     @media (max-width: 520px) {$1}
@@ -220,11 +220,11 @@
     @keyframes twinkle { 0%, 100% { opacity: .06; } 45% { opacity: .9; } }
 
     /* Shooting star */
-    .shooter { position: fixed; z-index: -1; pointer-events: none; width: 220px; height: 2px; transform: rotate(var(--rot,-20deg)); }
-    .shooter .runner { position: absolute; left: 0; top: 0; width: 220px; height: 2px; animation: fly 2.8s linear forwards; }
-    .shooter .trail { position: absolute; right: 0; top: 0; width: 220px; height: 2px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95) 60%, rgba(255,255,255,0)); filter: blur(1px); }
-    .shooter .head { position: absolute; right: -1px; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.95), 0 0 20px rgba(255,255,255,.6); }
-    @keyframes fly { from { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } to { transform: translateX(48vw); opacity: 0; } }
+    .shooter { position: fixed; z-index: 0; pointer-events: none; width: 220px; height: 2px; transform: rotate(var(--rot,-20deg)); pointer-events: none; width: 220px; height: 2px; transform: rotate(var(--rot,-20deg)); }
+    .shooter .runner { position: absolute; left: 0; top: 0; width: 220px; height: 2px; animation: fly 4.8s linear forwards; } }
+    .shooter .trail { position: absolute; right: 0; top: 0; width: 220px; height: 2px; background: linear-gradient(90deg, rgba(173,216,255,0), rgba(173,216,255,.45) 35%, rgba(173,216,255,.9) 60%, rgba(255,255,255,.95) 70%, rgba(173,216,255,.5) 85%, rgba(173,216,255,0)); filter: blur(1px); box-shadow: 0 0 12px rgba(120,180,255,.5), 0 0 28px rgba(120,180,255,.35); }
+    .shooter .head { position: absolute; right: -1px; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: radial-gradient(circle, #ffffff 0%, #d7e9ff 55%, rgba(215,233,255,0) 75%); box-shadow: 0 0 10px rgba(173,216,255,.95), 0 0 24px rgba(173,216,255,.6); }
+    @keyframes fly { from { transform: translateX(0); opacity: 0; } 8% { opacity: 1; } to { transform: translateX(52vw); opacity: 0; } } 10% { opacity: 1; } to { transform: translateX(48vw); opacity: 0; } }
   </style>
 </head>
 <body>
@@ -255,7 +255,7 @@
         </a>
       </div>
 
-      <footer>© <span id="y"></span> TAT Inc.</footer>
+      <footer class="page-footer">© <span id="y"></span> TAT Inc.</footer>
     </section>
   </main>
   <!-- SVG water ripple filter for reflection -->
