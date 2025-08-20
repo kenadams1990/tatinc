@@ -10,56 +10,156 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="/assets/reflection.jpg" />
   <style>
-    :root { --bg:#0b0f1a; --fg:#e6e8ee; --muted:#a7b0c0; --accent:#ff2d55; }
+    :root {
+      --bg:#0b0f1a; --fg:#e6e8ee; --muted:#a7b0c0;
+      --accent:#ff2538; --neon-1:#ff2a3c; --neon-2:#ff172a; --neon-3:#b70f22;
+      --ig1:#f58529; --ig2:#dd2a7b; --ig3:#8134af; --ig4:#515bd4; --fb:#1877F2; --li:#0A66C2;
+      --glow-a:#ff2a3c; --glow-b:#ff172a; --glow-c:#ff4d5a;
+      /* steel gradient reused for headline and its reflection */
+      --steel-grad: linear-gradient(90deg,
+        #f4f4f4 0%, #cfcfcf 10%, #7a7a7a 20%, #d9d9d9 32%, #5a5a5a 46%, #e6e6e6 60%, #7f7f7f 74%, #cfcfcf 86%, #fafafa 100%);
+    }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--fg); background: var(--bg); }
 
     /* Full-screen reflection logo background */
     body::before { content: ""; position: fixed; inset: 0; z-index: -2;
-      background: center / cover no-repeat url('/assets/reflection.jpg');
+      background: center / cover no-repeat var(--bg-url, url('/assets/reflection.jpg'));
     }
     /* Darken for readability */
     body::after { content: ""; position: fixed; inset: 0; z-index: -1;
-      background: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,.15), rgba(0,0,0,.78));
+      background: radial-gradient(1200px 800px at 60% 20%, rgba(0,0,0,.18), rgba(0,0,0,.78));
     }
 
-    /* Place card bottom-left so it avoids the logo */
-    .wrap { min-height: 100dvh; display: grid; place-items: start end; padding: clamp(16px,4vw,32px); color: var(--muted); text-shadow: 0 2px 8px rgba(0,0,0,.35); }
+    /* Place card top-right to avoid logo */
+    .wrap { min-height: 100dvh; display: grid; place-items: start end; padding: clamp(16px,4vw,32px); }
 
-    .card { width: min(720px, 100%);
-            background: rgba(8,16,21,.12); /* more transparent to reveal reflection */
-            border: none; /* remove outline */
-            border-radius: 16px; padding: 24px;
-            backdrop-filter: blur(8px) saturate(120%);
-            box-shadow: 0 6px 24px rgba(0,0,0,.25); /* softer, no inset */ }
+    .card {
+      position: relative; z-index: 0;
+      width: min(720px, 100%);
+      background: rgba(8,16,21,.12); /* transparent to reveal reflection */
+      border: none; border-radius: 16px; padding: 24px;
+      backdrop-filter: blur(8px) saturate(120%);
+      box-shadow: 0 6px 24px rgba(0,0,0,.25);
+    }
+    .card::before { /* soft spotlight behind card */
+      content: ""; position: absolute; inset: -24px; border-radius: 28px; pointer-events: none; z-index: -1;
+      background: radial-gradient(160% 140% at 70% 10%, rgba(255,37,56,.16) 0%, rgba(255,37,56,.10) 30%, rgba(0,0,0,.20) 70%, rgba(0,0,0,0) 100%);
+      filter: brightness(1.06) saturate(115%);
+    }
 
-    h1 { margin: 0 0 8px; font-size: clamp(28px, 4vw, 40px); letter-spacing: .3px; text-shadow: 0 2px 10px rgba(0,0,0,.45); }
-    p { margin: 0 0 16px; color: var(--muted); }
+    /* Stainless headline with animated reflection */
+    h1 { margin: 0 0 8px; font-size: clamp(28px, 6vw, 44px); letter-spacing: .3px; }
+    .headline { position: relative; display: inline-block; color: transparent;
+      /* brushed steel + shading */
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.08) 0, rgba(255,255,255,.08) .7px, rgba(0,0,0,.08) .7px, rgba(0,0,0,.08) 1.4px),
+        var(--steel-grad);
+      background-size: 300% 100%, 300% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; /* Safari: ensure gradient shows */
+      /* stainless edge + subtle neon */
+      -webkit-text-stroke: .8px rgba(255, 32, 48, .9);
+      paint-order: stroke fill;
+      text-shadow: 0 1px 0 rgba(255,255,255,.20), 0 2px 6px rgba(0,0,0,.55);
+      filter: drop-shadow(0 0 6px rgba(255,24,40,.30)) drop-shadow(0 0 14px rgba(255,16,32,.22));
+      animation: steelPan 24s linear infinite; /* slower, subtle */
+    }
+    .headline::after { /* reflection */
+      content: attr(data-text); position: absolute; left: 0; top: 100%; width: 100%;
+      transform: scaleY(-1); transform-origin: top; color: transparent;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,.08) 0, rgba(255,255,255,.08) .7px, rgba(0,0,0,.08) .7px, rgba(0,0,0,.08) 1.4px),
+        var(--steel-grad);
+      background-size: 300% 100%, 300% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      opacity: .32; filter: blur(.6px);
+      -webkit-mask-image: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 70%);
+              mask-image: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 70%);
+      animation: steelPan 24s linear infinite; /* sync with main */
+    }
+    .headline::before { /* sheen, hover-triggered */
+      content: ""; position: absolute; top: -20%; bottom: -20%; left: -25%; width: 40%;
+      transform: translateX(-140%) skewX(-20deg); opacity: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.38), transparent);
+    }
+    .headline:hover::before, .headline:focus-visible::before {
+      animation: sheen 1.6s ease-out 1;
+    }
 
-    .links { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 4px; }
-    .btn { display: inline-block; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); color: var(--fg); text-decoration: none; font-weight: 700; background: rgba(255,255,255,.04); transition: filter .15s ease, transform .15s ease, box-shadow .2s ease; }
-    .btn.primary { background: radial-gradient(120% 120% at 30% 20%, #ff3b3b 0%, #ff1539 40%, #c60f2f 100%); color: #0a0b0f; border-color: rgba(255,45,85,.65); box-shadow: 0 0 0 1px rgba(255,45,85,.25) inset, 0 10px 32px rgba(255,10,50,.40), 0 0 26px rgba(255,40,80,.55); }
+    @keyframes steelPan { from { background-position: 0% 0; } to { background-position: 100% 0; } }
+    @keyframes sheen {
+      0%, 70% { transform: translateX(-140%) skewX(-20deg); opacity: 0; }
+      76% { opacity: .8; }
+      90%, 100% { transform: translateX(220%) skewX(-20deg); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .headline, .headline::after, .headline::before { animation: none; }
+    }
+
+    .links { display: flex; gap: 12px; flex-wrap: wrap; margin: 4px 0 4px; }
+    .btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); color: var(--fg); text-decoration: none; font-weight: 700; background: rgba(255,255,255,.04); transition: filter .15s ease, transform .15s ease, box-shadow .2s ease, background .2s; }
+    .btn svg { width: 18px; height: 18px; flex: 0 0 18px; }
+
+    .btn.primary { background: rgba(255,255,255,.04); color: var(--fg); border-color: rgba(255,37,56,.45); box-shadow: none; }
+    .btn.primary:hover, .btn.primary:focus-visible, .btn.primary:active {
+      background: radial-gradient(120% 120% at 30% 20%, var(--neon-1) 0%, var(--neon-2) 46%, var(--neon-3) 100%);
+      color: #0a0b0f; box-shadow: 0 0 0 1px rgba(255,37,56,.25) inset, 0 12px 36px rgba(255,37,56,.45), 0 0 32px rgba(255,37,56,.60);
+      transform: translateY(-1px); outline: none;
+    }
     .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+    /* Instagram */
+    .btn.ig { border-color: rgba(221,42,123,.35); }
+    .btn.ig:hover { background: radial-gradient(140% 140% at 20% 10%, var(--ig1) 0%, var(--ig2) 35%, var(--ig3) 70%, var(--ig4) 100%);
+                    box-shadow: 0 12px 36px rgba(221,42,123,.45), 0 0 28px rgba(81,91,212,.45); border-color: rgba(221,42,123,.8); color:#0a0b0f; }
+    /* Facebook */
+    .btn.fb { border-color: rgba(24,119,242,.30); }
+    .btn.fb:hover { background: linear-gradient(180deg, #1b74e4, #0f5fd3);
+                    box-shadow: 0 12px 36px rgba(24,119,242,.45), 0 0 28px rgba(24,119,242,.55); border-color: rgba(24,119,242,.75); }
+    /* X */
+    .btn.x { border-color: rgba(255,255,255,.22); }
+    .btn.x:hover { background:#141414; box-shadow: 0 12px 36px rgba(255,255,255,.25), 0 0 26px rgba(255,255,255,.30); border-color: rgba(255,255,255,.35); color:#fff; }
+    /* LinkedIn */
+    .btn.li { border-color: rgba(10,102,194,.32); }
+    .btn.li:hover { background: linear-gradient(180deg, #0b66c2, #095aa9); box-shadow: 0 12px 36px rgba(10,102,194,.42), 0 0 28px rgba(10,102,194,.55); border-color: rgba(10,102,194,.75); }
 
     footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px 0 0; }
 
+    /* Mobile optimizations */
     @media (max-width: 520px) {
-      .wrap { place-items: end center; }
-      .card { padding: 18px; }
+      .wrap { place-items: start end; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 16px max(12px, env(safe-area-inset-left)); }
+      .card { padding: 14px; width: min(92vw, 520px); }
+      .btn { padding: 10px 12px; gap: 8px; font-weight: 600; }
+      .btn svg { width: 16px; height: 16px; }
     }
   </style>
 </head>
 <body>
   <main class="wrap">
     <section class="card" aria-label="Contact">
-      <h1>Let’s build.</h1>
-      <p>Email or connect on LinkedIn.</p>
-
+      <h1 class="headline" data-text="Let’s connect.">Let’s connect.</h1>
       <div class="links">
-        <a class="btn primary" href="mailto:emailme@tatinc.us">emailme@tatinc.us</a>
-        <a class="btn" href="https://www.linkedin.com/in/chris-a-b03609196/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn primary" href="mailto:emailme@tatinc.us" aria-label="Email">emailme@tatinc.us</a>
+        <a class="btn li" href="https://www.linkedin.com/in/chris-a-b03609196/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M4.98 3.5A2.5 2.5 0 117.5 6 2.5 2.5 0 014.98 3.5zM4.5 8.5h3v12h-3zM10 8.5h2.9v1.64h.04c.4-.76 1.38-1.56 2.84-1.56 3.03 0 3.59 2 3.59 4.6V20.5h-3v-5.35c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.06 1.39-2.06 2.83V20.5h-3z"/></svg>
+          LinkedIn
+        </a>
+        <a class="btn ig" href="https://www.instagram.com/tat_inc_/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/></svg>
+          Instagram
+        </a>
+        <a class="btn fb" href="https://www.facebook.com/profile.php?id=61579192531107" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M14 9h3V6h-3c-2.8 0-4 1.7-4 4v2H8v3h2v6h3v-6h2.6l.4-3H13v-1c0-.8.5-1 1-1z"/></svg>
+          Facebook
+        </a>
+        <a class="btn x" href="https://x.com/TAT_Inc_" target="_blank" rel="noopener" aria-label="X">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 3l18 18M21 3L3 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          X
+        </a>
       </div>
 
       <footer>© <span id="y"></span> TAT Inc.</footer>
@@ -68,6 +168,18 @@
 
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+  <script>
+    // Background fallback: prefer JPG, fall back to PNG if JPG missing
+    (function(){
+      var jpg = '/assets/reflection.jpg';
+      var png = '/assets/reflection.png';
+      function set(url){ document.body.style.setProperty('--bg-url', 'url("'+url+'")'); }
+      var i = new Image();
+      i.onload = function(){ set(jpg); };
+      i.onerror = function(){ var j = new Image(); j.onload = function(){ set(png); }; j.src = png + '?v=' + Date.now(); };
+      i.src = jpg + '?v=' + Date.now();
+    })();
   </script>
 </body>
 </html>
